@@ -1,58 +1,53 @@
 //CRUD (create-read-update-delete)
-//const mongodb = require('mongodb')
-//const MongoClient = mongodb.MongoClient //to connect to db
-//const ObjectID = mongodb.ObjectID //each document we enter to mongo gets assigned an automatic objectID
 const {MongoClient, ObjectID } = require('mongodb')
 
 const connectionURL = "mongodb://127.0.0.1:27017"
 const databaseName = 'task-manager'
-
-const id = new ObjectID()
-//console.log(id.getTimestamp())
-//console.log(id.id) //<Buffer 5c d1 ae 97 1b 03 33 1f 1d d9 1f f9>
-//console.log(id.id.length) //12;
-//console.log(id.toHexString()) //5cd1af2935cad221ef5ecf8f
-//console.log(id.toHexString().length) //24
-
 
 MongoClient.connect(connectionURL,{useNewUrlParser:true},(error,client)=>{//this last is a callback when a connection starts running
     if(error){
         return console.log('Unable to connect to database')
     }
 
-    //console.log('Connected correctly')
-    // const db = client.db(databaseName) //connecting to database we want to manipulate
-    // db.collection('users').insertOne({//inserting one data on user collection
-    //     _id: id,
-    //     name:'Erick',
-    //     age:27
-    // },(error,result)=>{
-    //     if(error){
-    //         return console.log('Unable to insert user')
-    //     }
+    const db =  client.db(databaseName)
+    //db.collection('users').findOne({name:"Erick",age:25},(error,user)=>{
+    //searching only one document
+        db.collection('users').findOne({_id:new ObjectID('5cd1ad44d9865c18bf5a72a3')},(error,user)=>{
+            //we specify new ObjectID("...") because what is stored as an id is not the string but an object.
+        if(error){
+            return console.log("Unable to fetch")
+        }
+        console.log(user)
+    })
 
-    //     console.log(result.ops)
-    // })
-//INSERT MANY
-    // db.collection('users').insertMany([
-    //     {name:'Arturo',age:24},
-    //     {name:"Yessica",age:28}],(error,result)=>{
-    //     if(error){
-    //         return console.log('Unable to insert documents')
-    //     }
+    db.collection('tasks').findOne({_id:new ObjectID('5cd1a3b71cdf9c6dd1ed3d5c')},(error,task)=>{
+            //we specify new ObjectID("...") because what is stored as an id is not the string but an object.
+        if(error){
+            return console.log("Unable to fetch")
+        }
+        console.log(task)
+    })
 
-    //     console.log(result.ops)
-    // })
+    //seacrching multiple documents
+    db.collection('users').find({age:27}).toArray((error,users)=>{
+        if(error){
+            return console.log('Error')
+        }
+        console.log(users)
+    })//instead a callback it is returned a cursor which
+    //is a pointer to the data in the database; 
+    //by using toArray we pull all the elementes that matches the search criteria
+    //we must be sure we have enough ram.
 
-    // db.collection('tasks').insertMany([
-    //     {description:"meeting with Juan",completed:true},
-    //     {description:"Meeting with Jerson and Yoel",completed:true},
-    //     {description:"Finish Nodejs App", completed: false}],
-    //     (error,result)=>{
-    //         if(error){
-    //             return console.log('Unable to insert documents')
-    //         }
-    //         console.log(result.ops)
-    //     }
-    // )
+    db.collection('users').find({age:27}).count((error,count)=>{
+        console.log(count)
+    })//instead of pull all only for counting operation we let mongo do the search
+    //so we do not put pressure on our ram memory.
+
+    db.collection('tasks').find({completed:false}).toArray((error,tasks)=>{
+        if(error){
+            return console.log('Error')
+        }
+        console.log(tasks)
+    })    
 })
