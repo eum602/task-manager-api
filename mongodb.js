@@ -12,14 +12,24 @@ MongoClient.connect(connectionURL,{useNewUrlParser:true},(error,client)=>{//this
 
     //console.log('Connected correctly')
     const db = client.db(databaseName) //connecting to database we want to manipulate
-    db.collection('users').insertOne({//inserting one data on user collection
-        name:'Erick',
-        age:27
-    },(error,result)=>{
+    // db.collection('users').insertOne({//inserting one data on user collection
+    //     name:'Erick',
+    //     age:27
+    // },(error,result)=>{
+    //     if(error){
+    //         return console.log('Unable to insert user')
+    //     }
+
+    //     console.log(result.ops)
+    // })
+
+    db.collection('users').insertMany([
+        {name:'Arturo',age:24},
+        {name:"Yessica",age:28}],(error,result)=>{
         if(error){
-            return console.log('Unable to insert user')
+            return console.log('Unable to insert documents')
         }
-        
+
         console.log(result.ops)
     })
 })
