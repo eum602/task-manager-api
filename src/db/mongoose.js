@@ -17,11 +17,32 @@ const User = mongoose.model('User',{
     }
 })
 //Creating a new instance of the MODEL "User"
-const me = new User({
-    name: "Erick",
-    age: '31'
+// const me = new User({
+//     name: "Erick",
+//     age: '31'
+// })
+
+// me.save()
+// .then(()=>{console.log(me)})
+// .catch(e=>{console.log(e)})
+
+//Creting the model for Task
+const Task = mongoose.model('Task',{
+    description:{
+        type: String
+    },
+    completed:{
+        type: Boolean
+    }
+})
+//creating a new instance
+const task1 = new Task({
+    description:"Meeting on Monday",
+    completed:false
 })
 
-me.save()
-.then(()=>{console.log(me)})
+task1.save()
+.then(()=>{
+    console.log(task1)
+})
 .catch(e=>{console.log(e)})
