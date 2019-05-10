@@ -51,6 +51,48 @@ app.get('/users/:id',async(req,res)=>{ //:id: placeholder; dynamic route handler
     }
 })
 
+
+
+app.patch("/users/:id", async(req,res)=>{
+    const updates = Object.keys(req.body) //array of properties of the object
+    const allowedUpdates = ['name','email','password','age']
+    const isValidOperation = updates.every(update=>allowedUpdates.includes(update))//shorthand form
+
+    if(!isValidOperation){
+        return res.status(400).send({error:'Invalid Update'})
+    }
+
+    //returns true if all returns are true)    
+    try{
+
+        const user = await User.findByIdAndUpdate(req.params.id,req.body,{new:true,runValidators:true}) 
+        //{new:true} => returns the new user; runValidators:true => the program checks requirements of the model restrictions
+        //instead of the old one.
+        if(!user){
+            res.status(404).send()
+        }else{
+            res.send(user)
+        }
+
+    }catch(e){
+        res.status(500).send(e)  //bad id, could not connect to db.
+    }
+})
+
+
+app.delete('/users/:id',async (req,res)=>{
+    try{
+        const user = await User.findByIdAndDelete(req.params.id)
+        if(!user){
+            return res.status(404).send()
+        }
+
+        res.send(user)
+    }catch(e){
+        res.status(500).send()
+    }
+})
+
 app.post('/tasks',async(req,res)=>{
     const task = new Task(req.body)
     try {
@@ -61,12 +103,12 @@ app.post('/tasks',async(req,res)=>{
     }
 })
 
-app.get('/tasks',(req,res)=>{
+app.get('/tasks',async (req,res)=>{
     try {
-        const tasks = Task.find({})
+        const tasks = await Task.find({})
         res.send(tasks)
     }catch(e){
-        res.status(500).send()
+        res.status(500).send(e)
     }
 })
 
@@ -79,6 +121,43 @@ app.get('/tasks/:id',async(req,res)=>{
         }else{
             res.send(task)
         }        
+    }catch(e){
+        res.status(500).send()
+    }
+})
+
+app.patch("/tasks/:id", async(req,res)=>{
+    const updates = Object.keys(req.body) //array of properties of the object
+    const allowedUpdates = ['description','completed']
+    const isValidOperation = updates.every(update=>allowedUpdates.includes(update))//shorthand form
+
+    if(!isValidOperation){
+        return res.status(400).send({error:'Invalid Update'})
+    }
+
+    //returns true if all returns are true)    
+    try{
+
+        const task = await Task.findByIdAndUpdate(req.params.id,req.body,{new:true,runValidators:true})         
+        if(!task){
+            res.status(404).send()
+        }else{
+            res.send(task)
+        }
+
+    }catch(e){
+        res.status(500).send(e)  //bad id, could not connect to db.
+    }
+})
+
+app.delete('/tasks/:id',async (req,res)=>{
+    try{
+        const task = await Task.findByIdAndDelete(req.params.id)
+        if(!task){
+            return res.status(404).send()
+        }
+
+        res.send(task)
     }catch(e){
         res.status(500).send()
     }
