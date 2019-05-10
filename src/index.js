@@ -9,70 +9,79 @@ const port = process.env.PORT || 3000
 app.use(express.json()) //parsing automatic incoming json to an object, so we can easily process objects in the
 //requests handlers
 
-app.post('/users',(req,res)=>{    
+app.post('/users',async(req,res)=>{
     const user = new User(req.body);
-    user.save()
-    .then(()=>{res.status(201).send(user)})
-    .catch(e=>{
-        //res.status(400) //setting the status code to 400 bad request from the cient
-        //res.send(e)})
-        res.status(400).send(e) //chaining
-    })
+    try {
+        await user.save()
+        res.status(201).send()
+    }catch(e){
+        res.status(404).send()
+    }
+    
+    // .then(()=>{res.status(201).send(user)})
+    // .catch(e=>{
+    //     //res.status(400) //setting the status code to 400 bad request from the cient
+    //     //res.send(e)})
+    //     res.status(400).send(e) //chaining
+    // })
 })
 
-app.get('/users',(req,res)=>{
-    User.find({}) //{} means it will fetch all from the User
-    .then(users =>{
+app.get('/users',async (req,res)=>{
+    try {
+        const users = await User.find({})
         res.send(users)
-    })
-    .catch(e=>{res.status(500).send()})//500:internal server error; only sending status code
+    }catch(e){
+        res.status(500).send() //500:internal server error; only sending status code
+    }    
 })
 
-app.get('/users/:id',(req,res)=>{ //:id: placeholder; dynamic route handler
+app.get('/users/:id',async(req,res)=>{ //:id: placeholder; dynamic route handler
     //req.params gives all the params that comes into the query
     //console.log(req.params) //{ id: 'bkdsbfaksdbfkjasd' }
     const _id = req.params.id
-    User.findById(_id)
-    .then(user=>{
+    try {
+        const user = User.findById(_id)
         if(!user){//means mongo does not find the user with that id
-            return res.status(404).send()
+            res.status(404).send()
+        }else{
+            res.send(user)
         }
-        res.send(user)
-    })
-    .catch(e=>{
-        console.log(e)
+    }catch(e){
         res.status(500).send()
-    })
+    }
 })
 
-app.post('/tasks',(req,res)=>{
+app.post('/tasks',async(req,res)=>{
     const task = new Task(req.body)
-    task.save()
-    .then(()=>{res.status(201).send(task)}) //201 stands for created
-    .catch((e)=>{res.status(400).send(e)})
+    try {
+        await task.save()
+        res.status(201).send()//201 stands for created
+    }catch(e){
+        res.status(400).send()
+    }
 })
 
 app.get('/tasks',(req,res)=>{
-    Task.find({})
-    .then(tasks =>{
+    try {
+        const tasks = Task.find({})
         res.send(tasks)
-    })
-    .catch(e=>{res.status(500).send()})//500:internal server error; only sending status code
+    }catch(e){
+        res.status(500).send()
+    }
 })
 
-app.get('/tasks/:id',(req,res)=>{
+app.get('/tasks/:id',async(req,res)=>{
     const _id = req.params.id
-    Task.findById(_id)
-    .then(task=>{
-        if(!task){//means mongo does not find the user with that id
-            return res.status(404).send()
-        }
-        res.send(task)
-    })
-    .catch(e=>{
-        console.log(e)
+    try {
+        const task = Task.findById(_id)
+        if(!task){
+            res.status(404).send()
+        }else{
+            res.send(task)
+        }        
+    }catch(e){
         res.status(500).send()
-    })
+    }
 })
 
 app.listen(port , ()=>{console.log(`Server is up on port ${port}`)})
