@@ -55,7 +55,11 @@ router.patch("/users/:id", async(req,res)=>{
     //returns true if all returns are true)    
     try{
 
-        const user = await User.findByIdAndUpdate(req.params.id,req.body,{new:true,runValidators:true}) 
+        //const user = await User.findByIdAndUpdate(req.params.id,req.body,{new:true,runValidators:true}) //updates bypassing mongoose
+        const user = await User.findById(req.params.id)
+        updates.forEach(update=>user[update]=req.body[update])
+
+        await user.save()
         //{new:true} => returns the new user; runValidators:true => the program checks requirements of the model restrictions
         //instead of the old one.
         if(!user){

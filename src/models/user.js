@@ -1,7 +1,8 @@
 const mongoose = require('mongoose')
 const validator = require('validator')
+const bcrypt = require('bcryptjs')
 //Defining my MODEL:
-const User = mongoose.model('User',{//when used first time it created a collection eith lowercase and
+const userSchema = new mongoose.Schema({//when used first time it created a collection eith lowercase and
     //in plural => "tasks"
     //setting up all those fields as properties of this object
     name:{
@@ -41,5 +42,18 @@ const User = mongoose.model('User',{//when used first time it created a collecti
         }
     }
 })
+//Now using a middleware before saving
+userSchema.pre('save', async function(next){//save: the name of the event 
+    const user = this //this makes reference to the document that is being saved=> rhe user we want to save
+    console.log('just before saving')
+
+    if(user.isModified('password')){
+        user.password = await bcrypt.hash(user.password,8) //using eigth rounds of hashing
+    }
+
+    next() //next is super important to be called in order to exit this function and continue working
+
+})
+const User = mongoose.model('User',userSchema) //userSchema: The mongoose objectect that represents the schema
 
 module.exports = User
