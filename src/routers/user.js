@@ -1,6 +1,8 @@
 const express = require('express')
 const User = require('../models/user')
+const auth = require('../middleware/auth')
 const router = new express.Router()
+
 
 // router.get('/test', (req,res)=>{
 //     res.send("from a new file")
@@ -28,13 +30,15 @@ router.post('/users/login', async (req,res)=>{
     }
 })
 
-router.get('/users',async (req,res)=>{
-    try {
-        const users = await User.find({})
-        res.send(users)
-    }catch(e){
-        res.status(500).send() //500:internal server error; only sending status code
-    }    
+router.get('/users/me',auth,async (req,res)=>{
+    res.send(req.user) //in the middleware auth we have authenticated and added user property to req;
+    //check that.
+    // try {
+    //     const users = await User.find({})
+    //     res.send(users)
+    // }catch(e){
+    //     res.status(500).send() //500:internal server error; only sending status code
+    // }    
 })
 
 router.get('/users/:id',async(req,res)=>{ //:id: placeholder; dynamic route handler

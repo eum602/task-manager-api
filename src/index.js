@@ -15,9 +15,9 @@ const port = process.env.PORT || 3000
 //     }
 // })
 
-app.use((req,res,next)=>{
-    res.status(503).send('Service is temporarily unavailable')
-})
+// app.use((req,res,next)=>{
+//     res.status(503).send('Service is temporarily unavailable')
+// })
 
 app.use(express.json()) //parsing automatic incoming json to an object, so we can easily process objects in the
 //requests handlers
