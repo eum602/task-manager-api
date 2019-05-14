@@ -14,3 +14,28 @@ app.use(userRouter)
 app.use(taskRouter)
 
 app.listen(port , ()=>{console.log(`Server is up on port ${port}`)})
+
+const jwt = require('jsonwebtoken')
+const myfunction = async () => {
+    const token = jwt.sign({_id:"something"},'somerandomseriescharacters',{expiresIn:'7 days'}) //0 seconds
+    //{_id:"something"}=>is a unique identifier for the user who's been authenticated
+    //The second argument ("somerandomseriescharacters") is the signature to verify the first argument(which
+    //is not necessarily private, instead public)
+    console.log(token)
+    //eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiJzb21ldGhpbmciLCJpYXQiOjE1NTc3NzY2MzV9.uX7GacCMTXL2MItmh5ICuWjM3n_vXMwI-5uCChRkXBo
+    //1.  eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9 ==> This is known as the header, contains metainformation about
+                    //what type of inforrmation it is 
+    //2.  eyJfaWQiOiJzb21ldGhpbmciLCJpYXQiOjE1NTc3NzY2MzV9 ==> This is the payload or body, it is a 64 encoded
+                    //json String and this contains the data that we provided, which in our case
+                    //will be our _id
+    //3.  uX7GacCMTXL2MItmh5ICuWjM3n_vXMwI-5uCChRkXBo => this is the signature, this is used to verify the token
+
+    //Verifying
+    const data = jwt.verify(token,"somerandomseriescharacters") //simulationg the fact that if a token is generated
+    //then it can be verified by using the signature ("somerandomseriescharacters")
+
+    console.log(data)
+
+}
+
+myfunction()

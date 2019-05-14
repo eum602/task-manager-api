@@ -10,10 +10,22 @@ router.post('/users',async(req,res)=>{
     const user = new User(req.body);
     try {
         await user.save()
-        res.status(201).send()
+        const token = await user.generateAuthToken()
+        res.status(201).send({user,token})
     }catch(e){
-        res.status(404).send()
-    }    
+        res.status(400).send(e)
+    }
+})
+
+router.post('/users/login', async (req,res)=>{
+    try {
+        const {email,password}=req.body
+        const user = await User.findByCredentials(email,password) //implementeed in user in models
+        const token = await user.generateAuthToken() //to generate token; //implementeed in user in models
+        res.send({user,token})
+    }catch(e){
+        res.status(400).send()
+    }
 })
 
 router.get('/users',async (req,res)=>{
