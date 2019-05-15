@@ -30,6 +30,30 @@ router.post('/users/login', async (req,res)=>{
     }
 })
 
+router.post('/users/logout',auth,async(req,res)=>{
+    try{
+        req.user.tokens = req.user.tokens.filter(token=>{
+            return token.token!==req.token
+        })//with this we are deleting the token that owns the user in one of the accounts
+        //but still have other tokens untouched so that another devices that are logged with that
+        //token can still remain logged.
+        await req.user.save()
+        res.send()
+    }catch(e){
+        res.status(500).send()
+    }
+})
+
+router.post('/users/logoutAll' ,auth, (req,res)=>{
+    try{
+        req.user.tokens = []
+        req.user.save()
+        res.send()
+    }catch(e){
+        res.status(500).send()
+    }
+})
+
 router.get('/users/me',auth,async (req,res)=>{
     res.send(req.user) //in the middleware auth we have authenticated and added user property to req;
     //check that.

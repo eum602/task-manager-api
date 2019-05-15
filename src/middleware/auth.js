@@ -14,6 +14,7 @@ const auth = async (req,res,next) => {
             throw new Error() //throwing an error without a message.
         }
 
+        req.token = token
         req.user = user
         next() //if the user correctly is authenticated tben the request can continue
     }catch(e){
