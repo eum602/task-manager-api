@@ -9,6 +9,11 @@ const taskSchema = new mongoose.Schema({//when used first time it created a coll
     completed:{
         type: Boolean,
         default:false,
+    },
+    owner:{
+        type: mongoose.Schema.Types.ObjectId, //object is an object id
+        required: true,
+        ref: 'User' //making a reference to relate the collection Task with the User collection.
     }
 })
 //Not using a middleware in this case:

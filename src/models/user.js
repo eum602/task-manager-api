@@ -52,6 +52,14 @@ const userSchema = new mongoose.Schema({//when used first time it created a coll
     }] 
 })
 
+userSchema.virtual('tasks',{ //task is anything; it is only the name of the virtual field
+    ref:'Task', //the collection where to find
+    localField:'_id', //the _id of the user that is used to make the match with the foreignField when searching
+    //is executed
+    foreignField:'owner' //that is one of the properties defined in Task schema which indicates the object id
+    //of whom owns that task
+})
+
 //methods are accessible on the INSTANCES, so these are called instance methods.
 userSchema.methods.generateAuthToken= async function(){
     //we use function notation because we want to access to "this"

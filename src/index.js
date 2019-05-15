@@ -50,14 +50,21 @@ const myfunction = async () => {
     //then it can be verified by using the signature ("somerandomseriescharacters")
 
     console.log(data)
-
-}
-const pet = {
-    name: "Ashton"
 }
 
-pet.toJSON = () => {
-    return {}
+const Task = require('./models/task')
+const User = require('./models/user')
+
+const myfcn = async () => {
+    /*const task = await Task.findById('5cdc589167896d20130e4464')
+    //console.log(task.owner)
+    await task.populate('owner').execPopulate() //tries to find the "user" who is associated with 
+    //this task; this is possible thanks to ref property on owner property on Task model.
+    console.log(task.owner)//now it returns the complete user who owns this task.*/
+
+    const user = await User.findById('5cdc56366ea971135aeb3a3e')
+    await user.populate('tasks').execPopulate()
+    console.log(user.tasks) //this tasks are stored not on the users collection but on the tasks collection
 }
-console.log(JSON.stringify(pet))
-myfunction()
+
+myfcn()
