@@ -101,7 +101,8 @@ router.delete('/users/me',auth,async (req,res)=>{
         //     return res.status(404).send()
         // }
         await req.user.remove() //achieves the exact same behaviour of lines of code above;
-        //remove is a mongoose method
+        //remove is a mongoose method; for this case we have set a pre event => check the user model
+        //the pre which event is "remove"
         res.send(req.user)
     }catch(e){
         res.status(500).send()

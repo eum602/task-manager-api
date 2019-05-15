@@ -2,6 +2,7 @@ const mongoose = require('mongoose')
 const validator = require('validator')
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
+const Task = require('./task')
 //Defining my MODEL:
 const userSchema = new mongoose.Schema({//when used first time it created a collection eith lowercase and
     //in plural => "tasks"
@@ -112,6 +113,12 @@ userSchema.pre('save', async function(next){//save: the name of the event
     next() //next is super important to be called in order to exit this function and continue working
 
 })
+
+userSchema.pre('remove',async function(next){//remove is part of the mongoose middleware documentation
+    const user = this
+    await Task.deleteMany({owner:user._id})
+    next()
+}) 
 const User = mongoose.model('User',userSchema) //userSchema: The mongoose objectect that represents the schema
 
 module.exports = User
