@@ -52,5 +52,12 @@ const myfunction = async () => {
     console.log(data)
 
 }
+const pet = {
+    name: "Ashton"
+}
 
+pet.toJSON = () => {
+    return {}
+}
+console.log(JSON.stringify(pet))
 myfunction()

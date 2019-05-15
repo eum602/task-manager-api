@@ -24,7 +24,9 @@ router.post('/users/login', async (req,res)=>{
         const {email,password}=req.body
         const user = await User.findByCredentials(email,password) //implementeed in user in models
         const token = await user.generateAuthToken() //to generate token; //implementeed in user in models
-        res.send({user,token})
+        //res.send({user:user.getPublicProfile(),token})
+        res.send({user,token}) //by using res.send we are implicitly calling the JSON.stringify over user and token
+        //so the toJSON method setted on user/model is fired and it returns only what is allowed to.
     }catch(e){
         res.status(400).send()
     }

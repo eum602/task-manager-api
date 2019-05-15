@@ -64,6 +64,17 @@ userSchema.methods.generateAuthToken= async function(){
     return token    
 }
 
+//userSchema.methods.getPublicProfile = function() {
+userSchema.methods.toJSON = function() { //Using toJSON method in order to set what we want to send (see  lecture 112)   
+    const user = this
+    const userObject = user.toObject()//method provided by mongoose to get the object of the user
+    //so that we can manipulate this
+    delete userObject.password
+    delete userObject.tokens
+    
+    return userObject
+}
+
 userSchema.statics.findByCredentials = async (email,password) =>{//static methods are accesible on the model,
     //sometimes called model methods
     const user = await User.findOne({email})
