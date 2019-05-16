@@ -18,11 +18,22 @@ router.post('/tasks',auth,async(req,res)=>{//adding auth
 })
 
 //GET /tasks?completed=true or completed=false
+//GET /tasks?limit=2&skip=3
+//GET /tasks?sortBy=createdAt_asc    =>ascending:from 0 to some number:  descending=> in reverse of descending
+                        //createdAt is the creteria that indicates date when task was created.
+                        //_asc stands for ascendent ; _desc stands for descendent
+                        // "_"  can be switched to ":"
 router.get('/tasks',auth,async (req,res)=>{
 
     const match = {}
+    const sort = {}
     if(req.query.completed){
         match.completed = req.query.completed === 'true'
+    }
+
+    if(req.query.sortBy){
+        const parts = req.query.sortBy.split(':') //splitting by the semicolon separator.
+        sort[parts[0]]= parts[1]==="desc"?-1:1
     }
 
     try {
@@ -33,9 +44,15 @@ router.get('/tasks',auth,async (req,res)=>{
             match,
             options: {//these are options for pagination
                 limit: parseInt(req.query.limit),//2 //how much tasks are sent at once
-                skip: parseInt(req.query.skip) //skip indicates from what number of task it will start
+                skip: parseInt(req.query.skip), //skip indicates from what number of task it will start
                 //sending information; lets say we have 10 task, then if we set skip to 3 then it will
                 //send from the task number four.
+                sort//:{
+                    //createdAt:-1 //1 stands for ascending
+                    //completed:-1 //-1 => descending => shows true tasks first
+                                //  1 => ascending => shows false tasks first
+
+                //}
             }
         }).execPopulate() //tasks is the name of the virtual document
         //in User model
