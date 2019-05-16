@@ -15,7 +15,7 @@ const taskSchema = new mongoose.Schema({//when used first time it created a coll
         required: true,
         ref: 'User' //making a reference to relate the collection Task with the User collection.
     }
-})
+},{timestamps:true})
 //Not using a middleware in this case:
 // taskSchema.pre('save',function(next){
 

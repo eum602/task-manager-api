@@ -62,9 +62,9 @@ const myfcn = async () => {
     //this task; this is possible thanks to ref property on owner property on Task model.
     console.log(task.owner)//now it returns the complete user who owns this task.*/
 
-    const user = await User.findById('5cdc56366ea971135aeb3a3e')
-    await user.populate('tasks').execPopulate()
-    console.log(user.tasks) //this tasks are stored not on the users collection but on the tasks collection
+    //const user = await User.findById('5cdc56366ea971135aeb3a3e')
+    //await user.populate('tasks').execPopulate()
+    //console.log(user.tasks) //this tasks are stored not on the users collection but on the tasks collection
 }
 
 myfcn()
