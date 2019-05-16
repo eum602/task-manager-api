@@ -28,7 +28,16 @@ router.get('/tasks',auth,async (req,res)=>{
     try {
         //const tasks = await Task.find({owner:req.user._id}) //one option to request
         //await req.user.populate('tasks').execPopulate()//virtual is called tasks=> check user in model
-        await req.user.populate({path:'tasks',match}).execPopulate() //tasks is the name of the virtual document
+        await req.user.populate({
+            path:'tasks',
+            match,
+            options: {//these are options for pagination
+                limit: parseInt(req.query.limit),//2 //how much tasks are sent at once
+                skip: parseInt(req.query.skip) //skip indicates from what number of task it will start
+                //sending information; lets say we have 10 task, then if we set skip to 3 then it will
+                //send from the task number four.
+            }
+        }).execPopulate() //tasks is the name of the virtual document
         //in User model
         //const tasks = await Task.find({})
         res.send(req.user.tasks)
