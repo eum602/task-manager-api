@@ -5,7 +5,7 @@ const userRouter = require('./routers/user')
 const taskRouter = require('./routers/task')
 
 const app = express()
-const port = process.env.PORT || 3000
+const port = process.env.PORT //using env-cmd to set the enviroment variable (see l133) || 3000
 
 app.use(express.json()) //parsing automatic incoming json to an object, so we can easily process objects in the
 

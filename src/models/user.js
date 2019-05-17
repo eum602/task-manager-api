@@ -71,7 +71,7 @@ userSchema.methods.generateAuthToken= async function(){
     //we use function notation because we want to access to "this"
     
     const user = this
-    const token = jwt.sign({_id:user._id.toString()},'thisismynewcourse') //toString() is to convert from   
+    const token = jwt.sign({_id:user._id.toString()},  process.env.JWT_SECRET) //toString() is to convert from   
     //objectId  to a standard string.
     user.tokens = user.tokens.concat({token}) //abbreviation of ...concat({token:token})    
     await user.save()
