@@ -20,10 +20,14 @@ const upload = multer({
     },
     fileFilter(req,file,cb){
         //file is not a PDF
-        if(!file.originalname.endsWith('.pdf')){
-            return(cb(new Error('please upload a PDF')))
-        }
+        // if(!file.originalname.endsWith('.pdf')){
+        //     return(cb(new Error('please upload a PDF')))
+        // }
 
+        if(!file.originalname.match(/\.(doc|docx)$/)){ //matching file extension finished with
+            //doc or docx => l124
+            return(cb(new Error('please upload a word document')))
+        }
         cb(undefined,true)
 
         // cb(new Error('File must be a PDF'))
@@ -35,12 +39,18 @@ const upload = multer({
     }
 })
 
+const errorMiddleware = (req, res, next) => {
+    throw Error('from my middleware')
+}
 app.post('/upload',upload.single('upload'),(req,res)=>{ //using the middleware upload.single
     //here we are telling multer to look for a file called upload wnen the request comes in.
     //so that is why we muust specify that key in the reuest client side.
     //a folder images is automatically created and inside will be stored all files because of the 
     //"upload.single()" method.
     res.send()
+},(error,req,res,next)=>{
+    //this is to handle the error
+    res.status(400).send({error:error.message})
 })
 
 app.listen(port , ()=>{console.log(`Server is up on port ${port}`)})

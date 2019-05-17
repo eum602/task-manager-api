@@ -3,7 +3,16 @@ const User = require('../models/user')
 const auth = require('../middleware/auth')
 const multer = require('multer')
 const upload = multer({
-    dest:'avatars'
+    dest:'avatars',
+    limits: {
+        fileSize: 1000000, //max 1MB
+    },
+    fileFilter(req,file,cb){
+        if(!file.originalname.match(/\.(jpg|jpeg|png)$/)){
+            cb(new Error('please only upload jpg, jpeg and png file extensions'))
+        }
+        cb(undefined,true)
+    }
 })
 const router = new express.Router()
 
@@ -52,6 +61,9 @@ router.post('/users/logout',auth,async(req,res)=>{
 
 router.post('/users/me/avatar',auth,upload.single('avatar'),(req,res)=>{
     res.send()
+},(error,req,res,next)=>{
+    //this is to handle the errors, it can be puton any route
+    res.status(400).send({error:error.message})
 })
 
 router.post('/users/logoutAll' ,auth, (req,res)=>{
