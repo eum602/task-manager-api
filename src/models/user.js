@@ -85,6 +85,7 @@ userSchema.methods.toJSON = function() { //Using toJSON method in order to set w
     //so that we can manipulate this
     delete userObject.password
     delete userObject.tokens
+    delete userObject.avatar
     
     return userObject
 }

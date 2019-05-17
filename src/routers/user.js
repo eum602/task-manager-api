@@ -2,6 +2,7 @@ const express = require('express')
 const User = require('../models/user')
 const auth = require('../middleware/auth')
 const multer = require('multer')
+const sharp = require('sharp')
 const upload = multer({
     //dest:'avatars', //commented we want to mange wether save it or not depending of another validation.
     limits: {
@@ -61,8 +62,13 @@ router.post('/users/logout',auth,async(req,res)=>{
 
 router.post('/users/me/avatar',auth,upload.single('avatar'),async(req,res)=>{
     //adding the file to the avatar on the mongo database
-    req.user.avatar=req.file.buffer //req.file is the file we uploaded; buffer contains all of the binary data for
+    //req.user.avatar=req.file.buffer //req.file is the file we uploaded; buffer contains all of the binary data for 
     //that file
+    const buffer = await sharp(req.file.buffer).resize({width:250,height:250}).png().toBuffer() //png() converts the image over to png format.
+    //so we are gonna save a png format to the db.
+    //resize => set to a specified size.
+    //toBuffer => converts again to buffer
+    req.user.avatar = buffer    
     await req.user.save()
     res.send()
 },(error,req,res,next)=>{
@@ -146,7 +152,9 @@ router.get('/users/:id/avatar', async(req,res)=>{
             throw Error()            
         }
 
-        res.set('Content-Type','image/jpg') //by default express set it up to "application/json"
+        res.set('Content-Type','image/png') //setting to png because that is the format mongo saved images
+        //according to an above configuration in /users/me/avatar POST
+        //by default express set it up to "application/json"
         res.send(user.avatar)
     }catch(e){
         res.status(404).send()
