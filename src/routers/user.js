@@ -3,6 +3,7 @@ const User = require('../models/user')
 const auth = require('../middleware/auth')
 const multer = require('multer')
 const sharp = require('sharp')
+const {sendWelcomeEmail,sendCancelationEmail} = require('../emails/account')
 const upload = multer({
     //dest:'avatars', //commented we want to mange wether save it or not depending of another validation.
     limits: {
@@ -26,6 +27,7 @@ router.post('/users',async(req,res)=>{
     const user = new User(req.body);
     try {
         await user.save()
+        sendWelcomeEmail(user.email, user.name)
         const token = await user.generateAuthToken()
         res.status(201).send({user,token})
     }catch(e){
@@ -133,6 +135,7 @@ router.delete('/users/me',auth,async (req,res)=>{
         await req.user.remove() //achieves the exact same behaviour of lines of code above;
         //remove is a mongoose method; for this case we have set a pre event => check the user model
         //the pre which event is "remove"
+        sendCancelationEmail(req.user.email, req.user.name)
         res.send(req.user)
     }catch(e){
         res.status(500).send()

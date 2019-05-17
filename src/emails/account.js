@@ -3,9 +3,28 @@ const sendgrigApiKey =  'SG.l4AiqI1BQDWMIN5uM6KDjw.l022z_jBzk_OQy1q3uUzKo8Byous8
 
 sgMail.setApiKey(sendgrigApiKey)
 
-sgMail.send({
-    to:'erick.pacheco.p@uni.pe',
-    from: 'eum602@gmail.com',
-    subject: 'This is my first creation!',
-    text: 'I hope this one gets to you'
-})
+const sendWelcomeEmail = (email,name) => {
+    sgMail.send({
+        to:email,
+        from: 'eum602@gmail.com', //here should go the email associated with a custom domain
+        subject: 'Thanks for joining in',
+        text: `Welcome to the app ${name}`, //here put a simple text  for users that whose mails do not support
+        //html code
+        html: `<h2>Welcome to the app ${name}</h2>` //here you can use html code
+    })
+}
+
+const sendCancelationEmail = (email,name) => {
+    sgMail.send({
+        to:email,
+        from: 'eum602@gmail.com', //here should go the email associated with a custom domain
+        subject: 'Good Bye',
+        text: `It was a pleasure to have you here, we hope see you soon ${name}!`, //here put a simple text  for users that whose mails do not support
+        //html code
+        html: `<h2>It was a pleasure to have you here, we hope see you soon ${name}!</h2>` //here you can use html code
+    })
+}
+
+module.exports = {
+    sendWelcomeEmail,sendCancelationEmail
+}
