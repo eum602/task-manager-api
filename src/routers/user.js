@@ -3,7 +3,7 @@ const User = require('../models/user')
 const auth = require('../middleware/auth')
 const multer = require('multer')
 const upload = multer({
-    dest:'avatars',
+    //dest:'avatars', //commented we want to mange wether save it or not depending of another validation.
     limits: {
         fileSize: 1000000, //max 1MB
     },
@@ -59,7 +59,11 @@ router.post('/users/logout',auth,async(req,res)=>{
     }
 })
 
-router.post('/users/me/avatar',auth,upload.single('avatar'),(req,res)=>{
+router.post('/users/me/avatar',auth,upload.single('avatar'),async(req,res)=>{
+    //adding the file to the avatar on the mongo database
+    req.user.avatar=req.file.buffer //req.file is the file we uploaded; buffer contains all of the binary data for
+    //that file
+    await req.user.save()
     res.send()
 },(error,req,res,next)=>{
     //this is to handle the errors, it can be puton any route
@@ -126,6 +130,26 @@ router.delete('/users/me',auth,async (req,res)=>{
         res.send(req.user)
     }catch(e){
         res.status(500).send()
+    }
+})
+
+router.delete('/users/me/avatar',auth,async(req,res)=>{
+    req.user.avatar = undefined
+    await req.user.save()
+    res.send()
+})
+
+router.get('/users/:id/avatar', async(req,res)=>{
+    try{
+        const user = await User.findById(req.params.id)
+        if(!user || !user.avatar){
+            throw Error()            
+        }
+
+        res.set('Content-Type','image/jpg') //by default express set it up to "application/json"
+        res.send(user.avatar)
+    }catch(e){
+        res.status(404).send()
     }
 })
 

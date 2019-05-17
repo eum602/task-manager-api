@@ -50,7 +50,10 @@ const userSchema = new mongoose.Schema({//when used first time it created a coll
                 type:String,
                 required:true
             }            
-    }]
+    }],
+   avatar:{
+       type:Buffer
+   } 
 },{
     timestamps:true}) //timestamp:true => one of the many possible options we can have.
     //by default timestamp is set to false
