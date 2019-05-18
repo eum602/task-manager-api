@@ -5,7 +5,7 @@ const auth = async (req,res,next) => {
         const token = req.header('Authorization').replace('Bearer ','') //replace('Bearer ','') replaces the string 'Bearer '
         //with nothing
         //if header is undefined then replace will throw an error so catch will attend this.
-        const decoded = jwt.verify(token,'thisismynewcourse') //validating the token with the signature 'thisismynewcourse
+        const decoded = jwt.verify(token,process.env.JWT_SECRET) //validating the token with the signature 'thisismynewcourse
         const user = await User.findOne({_id:decoded._id,'tokens.token':token}) //decoded._id is the id returned by verify, that id corresponds
         //to a specific user id, see user model in generateAuthToken method.
         //'tokens.token':token => represent like a loop to findout some match in the tokens array with the specified 
