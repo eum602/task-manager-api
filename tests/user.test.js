@@ -97,3 +97,44 @@ test('Should not delete account for user', async()=>{
     .send()
     .expect(401)
 })
+
+test('Should upload avatar image',async()=>{
+    await request(app)
+    .post('/users/me/avatar')
+    .set('Authorization',`Bearer ${userOne.tokens[0].token}`)
+    .attach('avatar','tests/features/profile-pic.jpg')//we send the key value {avatar:image_to_send}
+    .expect(200)
+
+    const user =  await User.findById(userOneId)
+    //expect({}).toBe({})//because jest uses triple equality. And in objects one object is 
+    //not equal to another even if the have the same properties; so instead use toBeEqual
+    //expect({}).toEqual({}) //it has algorithms that checks not whole objects but only the properties
+    expect(user.avatar).toEqual(expect.any(Buffer)) //expects the avatar to be a buffer
+})
+
+test('Should update valid user fields', async()=>{
+    await request(app)
+    .patch('/users/me')
+    .set('Authorization', `Bearer ${userOne.tokens[0].token}`)
+    .send({
+        name: "Erick Pachecos"
+    })
+    .expect(200)
+    //checking the data has been changed on the database
+    const user = await User.findById(userOneId)
+    // expect(user).toMatchObject({ //IT ALSO WORKS
+    //     name:"Erick Pachecos"
+    // })
+
+    expect(user.name).toEqual('Erick Pachecos')
+})
+
+test('Should not update invalid user fields', async()=>{
+    await request(app)
+    .patch('/users/me')
+    .set('Authorization', `Bearer ${userOne.tokens[0].token}`)
+    .send({
+        location: "fake" //non existing field
+    }).expect(400)
+})
+
