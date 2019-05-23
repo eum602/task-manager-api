@@ -96,7 +96,7 @@ router.get('/users/me',auth,async (req,res)=>{
     //     res.send(users)
     // }catch(e){
     //     res.status(500).send() //500:internal server error; only sending status code
-    // }    
+    // }
 })
 
 router.patch("/users/me", auth ,async(req,res)=>{
